@@ -4,3 +4,6 @@ CREATE TABLE IF NOT EXISTS products (id uuid PRIMARY KEY DEFAULT gen_random_uuid
 CREATE TABLE IF NOT EXISTS product_variants (product_id uuid NOT NULL REFERENCES products(id) ON DELETE CASCADE,size text NOT NULL CHECK(size IN ('XS','S','M','L','XL','XXL')),stock integer NOT NULL DEFAULT 0 CHECK(stock>=0),PRIMARY KEY(product_id,size));
 CREATE INDEX IF NOT EXISTS idx_products_active_category ON products(category) WHERE active;
 COMMIT;
+
+-- New installations: same idempotent checkout tables as migration 001.
+\i scripts/migrations/001_dummy_checkout.sql
