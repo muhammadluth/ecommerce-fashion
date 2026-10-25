@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const source=readFileSync('src/lib/catalog.ts','utf8');
+const transpiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+const module={exports:{}};
+vm.runInNewContext(transpiled,{module,exports:module.exports,require});
+const {filterProducts}=module.exports;
+const products=[{name:'Cotton Tee',description:'soft',category:'Atasan',sizes:['M','L'],price:200000},{name:'Midi Dress',description:'linen',category:'Dress',sizes:['S'],price:450000}];
+test('combined filters',()=>assert.equal(filterProducts(products,{category:'Atasan',size:'M',maxPrice:300000,search:'cotton'}).length,1));
+test('zero matches',()=>assert.equal(filterProducts(products,{category:'Dress',size:'XL',maxPrice:900000,search:''}).length,0));
+test('inclusive price',()=>assert.equal(filterProducts(products,{category:'Semua',size:'Semua',maxPrice:200000,search:''}).length,1));
+test('case insensitive search',()=>assert.equal(filterProducts(products,{category:'Semua',size:'Semua',maxPrice:900000,search:'LINEN'}).length,1));
