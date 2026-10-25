@@ -1,0 +1,10 @@
+.git
+.next
+node_modules
+.env*
+!.env.example
+*.tsbuildinfo
+.github
+tests
+README.md
+compose*.yml

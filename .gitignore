@@ -6,3 +6,6 @@ node_modules/
 *.tsbuildinfo
 coverage/
 next-env.d.ts
+!.env.host.example
+
+.local-backups/

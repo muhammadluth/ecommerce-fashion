@@ -1,0 +1,19 @@
+# Linux-host PostgreSQL connection. This stack runs the Next.js web container only.
+# The PostgreSQL cluster is managed directly by Linux, not by this Compose file.
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ecommerce-fashion-web:local
+    container_name: ecommerce-fashion-web
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env.host.local
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3102/api/products').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
